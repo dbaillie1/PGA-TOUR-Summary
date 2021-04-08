@@ -20,18 +20,18 @@ import plotly.io as pio; pio.renderers.default='notebook'
 def load_data(year):
     cd = getcwd()
     relPath = 'hole-' + str(year) + '.txt'
-    dataDir = os.path.join(cd,relPath)
+    #dataDir = os.path.join(cd,relPath)
     
-    df_hole = pd.read_csv(dataDir, sep=';', encoding='latin-1')
+    df_hole = pd.read_csv(relPath, sep=';', encoding='latin-1')
     
     #Convert inches to feet
     #df_hole['Made Putt Distance'] = df_hole['Made Putt Distance'] * 0.0833333
     
     
     relPath = 'event-' + str(year) + '.txt'
-    dataDir = os.path.join(cd,relPath)
+   # dataDir = os.path.join(cd,relPath)
     
-    df_event = pd.read_csv(dataDir, sep=';', encoding='latin-1')
+    df_event = pd.read_csv(relPath, sep=';', encoding='latin-1')
     df_event['Player Number'] = df_event[' Player Number']
 
 
