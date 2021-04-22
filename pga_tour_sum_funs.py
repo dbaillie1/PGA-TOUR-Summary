@@ -15,6 +15,9 @@ import plotly.graph_objects as go
 import warnings
 warnings.filterwarnings('ignore')
 import plotly.io as pio; pio.renderers.default='notebook'
+import pga_tour_sum_funs# DB: Custom functions to reduce size of notebook 
+from IPython.display import Markdown as md
+from sklearn.linear_model import LinearRegression
 
 
 def load_data(year):
@@ -169,3 +172,50 @@ def add_putting(df_event_player, df):
     
     
     return df_event_player
+
+
+
+def getAllData(year, min_events):
+    df, df_event = load_data(year)
+    df_measured, df_measured_player = get_measured_data(df, 0)
+    df_hole_average, df_hole_sum = get_hole_average_data(df, 0)
+    df_event_player = player_level_data(df, df_event, min_events)
+    
+    if year == 2021:
+        av = 295.7
+    elif year == 2020:
+        av = 296.4
+    elif year == 2019:
+        av = 293.3
+    elif year == 2018:
+        av = 296.1   
+    elif year == 2017:
+        av = 292.1       
+    elif year == 2016:
+        av = 290.0
+    elif year == 2015:
+        av = 289.7
+    return df, df_event, df_measured, df_measured_player, df_hole_average, df_hole_sum, df_event_player, av
+
+
+def bubble(df, x_var, y_var, title_str, year):
+    fig = px.scatter(df, x=x_var, y=y_var, trendline = 'ols',
+         color="Name", size="Money", 
+                 hover_name="Name", title=title_str + str(year))
+
+    # Do regression
+    x = df[x_var].to_numpy().reshape(-1, 1)
+    y = df[y_var].to_numpy().reshape(-1, 1)
+    model = LinearRegression().fit(x,y)
+    rsq = model.score(x, y)
+
+    # Construct line to plot
+    lx = [np.min(x), np.max(x)]
+    ly = lx * model.coef_[0] + model.intercept_[0]
+
+    # Add line and text
+    fig.add_scatter(x=lx, y=ly, mode='lines')
+    
+    return fig, model, rsq
+    
+    
